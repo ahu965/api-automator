@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'simpleui',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,9 +76,17 @@ WSGI_APPLICATION = 'apiAutomator.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'api_automator',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '47.106.133.203',
+        'PORT': '3306',
     }
 }
 
@@ -118,3 +130,30 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# drf配置
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 用户名密码
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # jwt
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+
+}
+
+# simplejwt配置
+SIMPLE_JWT = {
+    # token过期时间
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30)
+}
+
+# 跨域配置
+# 如果为True，则将不使用白名单，并且将接受所有来源。默认为False
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = [
+# 	"https://example.com",
+# ]
