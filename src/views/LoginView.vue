@@ -31,7 +31,9 @@
         </a-form-item>
 
         <a-form-item>
-          <a-button type="primary" class="btn-login">登录</a-button>
+          <a-button type="primary" class="btn-login" @click="login"
+            >登录
+          </a-button>
         </a-form-item>
       </div>
     </a-form>
@@ -40,11 +42,18 @@
 
 <script setup>
 import { reactive } from "vue";
+import { loginApi } from "../apis/user";
 
 const formState = reactive({
   username: "",
   password: "",
 });
+
+const login = () => {
+  loginApi(formState.username, formState.password).then((val) => {
+    console.log(val);
+  });
+};
 </script>
 
 <style lang="scss">
