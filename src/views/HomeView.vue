@@ -69,11 +69,15 @@ onMounted(() => {
   .logo_big {
     width: 200px;
     height: 60px;
+    background-image: url("./public/images/logo_big.png");
+    background-size: 200px 60px;
   }
 
   .logo_small {
     width: 80px;
     height: 60px;
+    background-image: url("./public/images/logo_small.png");
+    background-size: 80px 60px;
   }
 
   .trigger {
