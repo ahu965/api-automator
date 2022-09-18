@@ -7,14 +7,13 @@ import router from "./router";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
 
-import axios from "axios";
+// 引入阿里云字体图标css
+import "./assets/icons/iconfont/iconfont.css";
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
 app.use(Antd);
-
-app.provide("$axios", axios);
 
 app.mount("#app");

@@ -8,6 +8,26 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      children: [
+        {
+          path: "nav1",
+          name: "nav 1",
+          icon: "icon-modular",
+          component: import("../views/AboutView.vue"),
+        },
+        {
+          path: "nav2",
+          name: "nav 2",
+          icon: "icon-gongjuguanli1",
+          component: import("../views/AboutView.vue"),
+        },
+        {
+          path: "nav3",
+          name: "nav 3",
+          icon: "icon-setting",
+          component: import("../views/AboutView.vue"),
+        },
+      ],
     },
     {
       path: "/about",
