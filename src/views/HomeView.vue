@@ -88,12 +88,17 @@ onMounted(() => {
     transition: color 0.3s;
   }
 
-  .ant-menu-item a {
+  .ant-menu-item a,
+  .ant-menu-item a:hover {
     color: #a4adb5;
   }
+
   .ant-menu-item-selected a,
   .ant-menu-item-selected a:hover {
     color: #eeeeee;
+  }
+  .ant-layout-content {
+    overflow-y: auto;
   }
 }
 
