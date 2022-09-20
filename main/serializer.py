@@ -12,7 +12,7 @@ class UserSerializer(ModelSerializer):
 
 
 class ProjectsSerializer(ModelSerializer):
-    created_by = UserSerializer()
+    created_by = UserSerializer(read_only=True)
     created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
