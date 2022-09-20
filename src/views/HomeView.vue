@@ -1,21 +1,21 @@
 <template>
   <a-layout class="home">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-      <div v-if="!collapsed" class="logo_big"/>
-      <div v-if="collapsed" class="logo_small"/>
+      <div v-if="!collapsed" class="logo_big" />
+      <div v-if="collapsed" class="logo_small" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item v-for="(item, index) in menus" :key="index">
           <template #icon>
             <a-icon
-                class="iconfont"
-                :class="item.icon"
-                style="margin-right: 10px"
+              class="iconfont"
+              :class="item.icon"
+              style="margin-right: 10px"
             ></a-icon>
           </template>
           <span>
             <router-link :to="item.path" class="link">{{
-                item.name
-              }}</router-link>
+              item.name
+            }}</router-link>
           </span>
         </a-menu-item>
       </a-menu>
@@ -23,33 +23,33 @@
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0">
         <menu-unfold-outlined
-            v-if="collapsed"
-            class="trigger"
-            @click="collapsed = !collapsed"
+          v-if="collapsed"
+          class="trigger"
+          @click="collapsed = !collapsed"
         />
         <menu-fold-outlined
-            v-else
-            class="trigger"
-            @click="collapsed = !collapsed"
+          v-else
+          class="trigger"
+          @click="collapsed = !collapsed"
         />
       </a-layout-header>
       <a-layout-content
-          :style="{
+        :style="{
           margin: '24px 16px',
           padding: '24px',
           background: '#fff',
           minHeight: '280px',
         }"
       >
-        <RouterView/>
+        <RouterView />
       </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
 
 <script setup>
-import {MenuUnfoldOutlined, MenuFoldOutlined} from "@ant-design/icons-vue";
-import {onMounted, ref} from "vue";
+import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
+import { onMounted, ref } from "vue";
 import router from "../router";
 
 let selectedKeys = ref(["1"]);

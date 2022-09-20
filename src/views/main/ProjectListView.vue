@@ -1,7 +1,7 @@
 <template>
   <div class="project-list">
-    <div class="project_filter">
-      <a-form layout="inline" :model="projectParams">
+    <div class="project_filter clearfix">
+      <a-form layout="inline" :model="projectParams" class="fl">
         <a-form-item label="项目名称">
           <a-input v-model:value="projectParams.name" placeholder="项目名称">
           </a-input>
@@ -12,6 +12,14 @@
           </a-button>
         </a-form-item>
       </a-form>
+
+      <a-button
+        type="primary"
+        html-type="submit"
+        @click="createModelVisible = true"
+        class="fr"
+        >新增项目
+      </a-button>
     </div>
     <a-table :columns="columns" :data-source="data" :pagination="pagination">
       <template #name="{ text }">
@@ -20,24 +28,49 @@
       <template #creator="{ text }">
         <span>{{ text.username }}</span>
       </template>
-      <template #action>
+      <template #action="{ text }">
         <span>
-          <!--          <a-divider type="vertical" />-->
-          <a>删除</a>
-          <!--          <a-divider type="vertical" />-->
-          <!--          <a class="ant-dropdown-link">-->
-          <!--            More actions-->
-          <!--            <down-outlined />-->
-          <!--          </a>-->
+          <a @click="deleteProjectPre(text)">删除</a>
         </span>
       </template>
     </a-table>
   </div>
+  <a-modal
+    v-model:visible="createModelVisible"
+    title="新增项目"
+    ok-text="确定"
+    cancel-text="取消"
+    @ok="addProject"
+  >
+    <a-form
+      :model="createParams"
+      v-bind="layout"
+      name="nest-messages"
+      @finish="onFinish"
+    >
+      <a-form-item label="项目名称" :rules="[{ required: true }]">
+        <a-input v-model:value="createParams.name" />
+      </a-form-item>
+      <a-form-item label="项目描述">
+        <a-input v-model:value="createParams.desc" />
+      </a-form-item>
+    </a-form>
+  </a-modal>
+  <a-modal
+    v-model:visible="deleteModalVisible"
+    title="提示"
+    ok-text="确认删除"
+    cancel-text="取消"
+    @ok="deleteProject"
+  >
+    <p>{{ modalMessage }}</p>
+  </a-modal>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { listApi } from "../../apis/project";
+import { createApi, deleteApi, listApi } from "../../apis/project";
+import { message } from "ant-design-vue";
 
 const columns = [
   {
@@ -98,11 +131,9 @@ const onPageChange = (page) => {
 };
 
 const listProject = (name) => {
-  console.log("xxx");
   listApi(name, current.value).then((res) => {
     data.value = res.results;
     total.value = res.count;
-    // console.log(total.value)
   });
 };
 
@@ -110,6 +141,39 @@ const query = () => {
   listProject(projectParams.value.name);
 };
 
+const createModelVisible = ref(false);
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 16 },
+};
+const createParams = ref({});
+const addProject = () => {
+  createApi(createParams.value).then(() => {
+    createModelVisible.value = false;
+    createParams.value = {};
+    listProject("");
+  });
+};
+
+const deleteModalVisible = ref(false);
+const modalMessage = ref("");
+const deleteId = ref(null);
+
+const deleteProjectPre = (p) => {
+  modalMessage.value = "是否确认删除【" + p.name + "】？";
+  deleteModalVisible.value = true;
+  deleteId.value = p.id;
+};
+
+const deleteProject = () => {
+  if (deleteId.value != null) {
+    deleteApi(deleteId.value).then(() => {
+      message.success("删除成功");
+      listProject("");
+      deleteModalVisible.value = false;
+    });
+  }
+};
 onMounted(() => {
   listProject("");
 });
