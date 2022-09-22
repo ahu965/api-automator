@@ -26,10 +26,12 @@
         <a>{{ text }}</a>
       </template>
       <template #creator="{ text }">
-        <span>{{ text.username }}</span>
+        <span>{{ text == null ? "" : text.username }}</span>
       </template>
       <template #action="{ text }">
         <span>
+          <a @click="updateProjectPre(text)">编辑</a>
+          <a-divider type="vertical" />
           <a @click="deleteProjectPre(text)">删除</a>
         </span>
       </template>
@@ -65,11 +67,33 @@
   >
     <p>{{ modalMessage }}</p>
   </a-modal>
+  <a-modal
+    v-model:visible="updateModelVisible"
+    title="编辑项目"
+    ok-text="确定"
+    cancel-text="取消"
+    @ok="updateProject"
+  >
+    <a-form :model="updateProjectForm" v-bind="layout" name="nest-messages">
+      <a-form-item label="项目名称" :rules="[{ required: true }]">
+        <a-input v-model:value="updateProjectForm.name" />
+      </a-form-item>
+      <a-form-item label="项目描述">
+        <a-input v-model:value="updateProjectForm.desc" />
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { createApi, deleteApi, listApi } from "../../apis/project";
+import {
+  createApi,
+  deleteApi,
+  detailApi,
+  listApi,
+  updateApi,
+} from "../../apis/project";
 import { message } from "ant-design-vue";
 
 const columns = [
@@ -171,6 +195,26 @@ const deleteProject = () => {
       message.success("删除成功");
       listProject("");
       deleteModalVisible.value = false;
+    });
+  }
+};
+
+const updateModelVisible = ref(false);
+const updateProjectForm = ref({});
+const updateProjectPre = (text) => {
+  detailApi(text.id).then((res) => {
+    console.log(res);
+    updateProjectForm.value = res;
+    updateModelVisible.value = true;
+  });
+};
+
+const updateProject = () => {
+  if (updateProjectForm.value.id != null) {
+    updateApi(updateProjectForm.value).then(() => {
+      message.success("编辑成功");
+      updateModelVisible.value = false;
+      listProject("");
     });
   }
 };

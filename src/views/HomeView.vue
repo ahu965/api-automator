@@ -13,7 +13,7 @@
             ></a-icon>
           </template>
           <span>
-            <router-link :to="item.path" class="link">{{
+            <router-link :to="'/' + item.path" class="link">{{
               item.name
             }}</router-link>
           </span>

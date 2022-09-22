@@ -22,3 +22,18 @@ export function deleteApi(id) {
     method: "delete",
   });
 }
+
+export function detailApi(id) {
+  return request({
+    url: "main/projects/" + id,
+    method: "get",
+  });
+}
+
+export function updateApi(data) {
+  return request({
+    url: "main/projects/" + data.id + "/",
+    method: "put",
+    data,
+  });
+}
