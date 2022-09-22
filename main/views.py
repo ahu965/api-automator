@@ -10,6 +10,8 @@ from main.serializer import ProjectsSerializer
 class ProjectsViewSet(mixins.ListModelMixin,
                       mixins.CreateModelMixin,
                       mixins.DestroyModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
                       viewsets.GenericViewSet):
     queryset = Projects.objects.filter()
     serializer_class = ProjectsSerializer
