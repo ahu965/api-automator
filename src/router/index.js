@@ -16,10 +16,10 @@ const router = createRouter({
           component: () => import("../views/main/ProjectListView.vue"),
         },
         {
-          path: "nav2",
-          name: "nav 2",
+          path: "main/apis",
+          name: "接口管理",
           icon: "icon-gongjuguanli1",
-          component: () => import("../views/AboutView.vue"),
+          component: () => import("../views/main/apis/ApiListView.vue"),
         },
         {
           path: "nav3",

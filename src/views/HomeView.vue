@@ -100,6 +100,7 @@ onMounted(() => {
 
   .ant-layout-content {
     overflow-y: auto;
+    padding: 10px !important;
   }
 }
 
