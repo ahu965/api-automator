@@ -6,8 +6,9 @@
         <a-button
           type="primary"
           style="background-color: #28bc7e; border-color: #28bc7e"
-          >Save</a-button
-        >
+          @click="saveApi"
+          >Save
+        </a-button>
       </template>
       <a-form
         :model="formState"
@@ -17,38 +18,47 @@
       >
         <a-form-item label="名称/描述">
           <a-input v-model:value="formState.name" placeholder="请输入名称" />
-          <a-input v-model:value="formState.name" placeholder="请输入描述" />
+          <a-input v-model:value="formState.desc" placeholder="请输入描述" />
         </a-form-item>
         <a-form-item label="方法/路径" class="method">
-          <a-select placeholder="请选择请求方法">
+          <a-select
+            v-model:value="formState.method"
+            placeholder="请选择请求方法"
+          >
             <a-select-option value="GET">GET</a-select-option>
             <a-select-option value="POST">POST</a-select-option>
             <a-select-option value="PATCH">PATCH</a-select-option>
             <a-select-option value="DELETE">DELETE</a-select-option>
             <a-select-option value="PATCH">PATCH</a-select-option>
           </a-select>
-          <a-input v-model:value="formState.name" placeholder="请输入描述" />
+          <a-input v-model:value="formState.path" placeholder="请输入路径" />
         </a-form-item>
       </a-form>
       <a-tabs>
         <a-tab-pane key="1" tab="请求参数">
-          <api-params></api-params>
+          <api-params ref="apiParam"></api-params>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求头">
-          <api-headers></api-headers>
+          <api-headers ref="apiHeader"></api-headers>
         </a-tab-pane>
         <a-tab-pane key="3" tab="请求体">
           <api-body></api-body>
         </a-tab-pane>
-        <a-tab-pane key="4" tab="前置脚本">Content of Tab Pane 3</a-tab-pane>
-        <a-tab-pane key="5" tab="后置脚本">Content of Tab Pane 3</a-tab-pane>
+        <a-tab-pane key="4" tab="前置脚本">TODO</a-tab-pane>
+        <a-tab-pane key="5" tab="后置脚本">TODO</a-tab-pane>
       </a-tabs>
       <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="1" tab="响应体">Content of Tab Pane 1</a-tab-pane>
-        <a-tab-pane key="2" tab="响应头">Content of Tab Pane 2</a-tab-pane>
-        <a-tab-pane key="3" tab="断言">Content of Tab Pane 3</a-tab-pane>
-        <a-tab-pane key="3" tab="提取">Content of Tab Pane 3</a-tab-pane>
-        <a-tab-pane key="3" tab="请求内容">Content of Tab Pane 3</a-tab-pane>
+        <a-tab-pane key="1" tab="响应体">
+          <res-body></res-body>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="响应头">
+          <res-header></res-header>
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="断言">TODO</a-tab-pane>
+        <a-tab-pane key="4" tab="提取">TODO</a-tab-pane>
+        <a-tab-pane key="5" tab="请求内容">
+          <req-content></req-content>
+        </a-tab-pane>
       </a-tabs>
     </a-card>
   </div>
@@ -59,20 +69,55 @@ import { ref } from "vue";
 import ApiParams from "@/components/apis/ApiParams.vue";
 import ApiHeaders from "@/components/apis/ApiHeaders.vue";
 import ApiBody from "@/components/apis/ApiBody.vue";
+import ResBody from "@/components/apis/ResBody.vue";
+import ResHeader from "@/components/apis/ResHeader.vue";
+import ReqContent from "@/components/apis/reqContent.vue";
+import { addApiApi } from "../../apis/api";
+import { message } from "ant-design-vue";
+
+const props = defineProps({
+  category_id: {
+    type: String,
+    default: "",
+  },
+});
+
+const apiHeader = ref();
+const apiParam = ref();
 
 const formState = ref({});
+
+const saveApi = () => {
+  if (props.category_id !== "") {
+    formState.value.category = props.category_id;
+  }
+  // 获取请求参数
+  if(apiParam.value){
+    formState.value.params = JSON.stringify(apiParam.value.getData())
+  }
+  // 获取请求头
+  if (apiHeader.value) {
+    formState.value.headers = JSON.stringify(apiHeader.value.getData());
+  }
+  addApiApi(formState.value).then(() => {
+    message.success("保存成功");
+  });
+};
 </script>
 
 <style lang="scss">
 .api-content {
   width: 100%;
   height: 100%;
-  .ant-card{
+
+  .ant-card {
     overflow-y: auto;
   }
+
   .ant-form-item-control-input-content {
     display: flex;
   }
+
   .method {
     .ant-select {
       flex: 2;

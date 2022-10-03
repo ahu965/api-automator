@@ -1,20 +1,21 @@
 <template>
   <div class="api-params">
-    <table-form :initData="initData"></table-form>
+    <table-form :initData="initData"> </table-form>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineExpose } from "vue";
 import TableForm from "@/components/TableForm.vue";
 
-const initData = ref([
-  {
-    key: "name-1",
-    value: "18",
-    desc: "1111",
-  },
-]);
+const initData = ref([]);
+
+const getData = () => {
+  return initData.value;
+};
+defineExpose({
+  getData,
+});
 </script>
 
 <style lang="scss">

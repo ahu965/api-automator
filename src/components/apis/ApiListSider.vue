@@ -3,7 +3,7 @@
     <div class="top-search">
       <a-popover trigger="hover">
         <template #content>
-          <a-button type="link">新增分类</a-button>
+          <a-button type="link" @click="showCategoryModal">新增分类</a-button>
           <a-button type="link">新增接口</a-button>
         </template>
         <a-icon
@@ -23,6 +23,7 @@
       show-line
       show-icon
       :tree-data="treeData"
+      :load-data="loadData"
     >
       <template #switcherIcon="{ switcherCls }">
         <down-outlined :class="switcherCls" />
@@ -44,19 +45,23 @@
           <span class="api-method" style="color: #e71f12">{{ method }}</span>
         </template>
       </template>
-      <template #title="{ title, method, type }">
+      <template #title="{ name, type, id }">
         <div
           :style="[
-            method == null ? 'width: 100%' : 'width: calc(100% - 48px);', // 计算属性，即宽度为减去某个固定值后的100%宽度
+            type == 'collection' ? 'width: 100%' : 'width: calc(100% - 48px);', // 计算属性，即宽度为减去某个固定值后的100%宽度
           ]"
           style="display: inline-block"
         >
-          <span>{{ title }}</span>
+          <span>{{ name }}</span>
           <a-popover trigger="hover" v-if="type == 'collection'">
             <template #content>
               <a-button type="link">编辑</a-button>
-              <a-button type="link">新增分类</a-button>
-              <a-button type="link">新增接口</a-button>
+              <a-button type="link" @click="showCategoryModal(id)"
+                >新增分类
+              </a-button>
+              <a-button type="link" @click="showApiContent(id)"
+                >新增接口
+              </a-button>
               <a-button type="link" danger>删除</a-button>
             </template>
             <a-icon
@@ -78,109 +83,100 @@
       </template>
     </a-tree>
   </div>
+  <a-modal
+    v-model:visible="categoryVisible"
+    :title="categoryModalTitle"
+    :ok-text="'确定'"
+    :cancel-text="'取消'"
+    @ok="postCategory"
+  >
+    <a-form :model="categoryForm" v-bind="layout" name="nest-messages">
+      <a-form-item label="分类名称" :rules="[{ required: true }]">
+        <a-input v-model:value="categoryForm.name" />
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <script setup>
 import { DownOutlined } from "@ant-design/icons-vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import {
+  addCategoryApi,
+  listApiApi,
+  listCategoryApi,
+  listCategoryApiApi,
+} from "../../apis/api";
+import axios from "axios";
+
+const emits = defineEmits(["showDefault"]);
+
+const showApiContent = (id) => {
+  emits("showDefault", id, false);
+};
 
 const expandedKeys = ref(["0-0-0"]);
 const selectedKeys = ref([]);
-const treeData = [
-  {
-    title: "分类一",
-    key: "0-0",
-    type: "collection",
-    children: [
-      {
-        title: "parent 1-0",
-        key: "0-0-0",
-        method: "PATCH",
-        type: "api",
-        children: [
-          {
-            title: "leaf",
-            key: "0-0-0-0",
-            type: "case",
-          },
-          {
-            title: "leaf",
-            key: "0-0-0-1",
-          },
-          {
-            title: "leaf",
-            key: "0-0-0-2",
-          },
-        ],
-      },
-      {
-        title: "parent 1-1",
-        key: "0-0-1",
-        method: "PUT",
-        type: "api",
-        children: [
-          {
-            title: "leaf",
-            key: "0-0-1-0",
-          },
-        ],
-      },
-      {
-        title: "parent 1-2",
-        key: "0-0-2",
-        method: "GET",
-        type: "api",
-        children: [
-          {
-            title: "leaf",
-            key: "0-0-2-0",
-          },
-          {
-            title: "leaf",
-            key: "0-0-2-1",
-          },
-        ],
-      },
-      {
-        title: "parent 1-3",
-        key: "0-0-2",
-        method: "POST",
-        type: "api",
-        children: [
-          {
-            title: "leaf",
-            key: "0-0-2-0",
-          },
-          {
-            title: "leaf",
-            key: "0-0-2-1",
-          },
-        ],
-      },
-      {
-        title: "parent 1-4",
-        key: "0-0-2",
-        method: "DELETE",
-        type: "api",
-        children: [
-          {
-            title: "leaf",
-            key: "0-0-2-0",
-          },
-          {
-            title: "leaf",
-            key: "0-0-2-1",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "分类二",
-    key: "0-1",
-    type: "collection",
-  },
-];
+const treeData = ref([]);
+const categoryVisible = ref(false);
+const categoryModalTitle = ref("");
+const categoryForm = ref({
+  id: "",
+  name: "",
+  parent_category: null,
+});
+
+const showCategoryModal = (id) => {
+  if (id != null) {
+    categoryModalTitle.value = "新增子分类";
+    categoryForm.value.parent_category = id;
+  } else {
+    categoryModalTitle.value = "新增分类";
+  }
+  categoryVisible.value = true;
+};
+const postCategory = () => {
+  if (categoryForm.value.id === "") {
+    let body = {
+      name: categoryForm.value.name,
+    };
+    if (categoryForm.value.parent_category != null) {
+      body["parent_category"] = categoryForm.value.parent_category;
+    }
+    addCategoryApi(body).then(() => {
+      categoryVisible.value = false;
+      queryCategories(-1);
+    });
+  }
+};
+const loadData = (treeNode) => {
+  return new Promise((resolve) => {
+    if (treeNode.dataRef.children) {
+      resolve();
+      return;
+    }
+    if (treeNode.dataRef.type === "collection") {
+      listCategoryApiApi(treeNode.dataRef.id).then((res) => {
+        treeNode.dataRef.children = res;
+        treeData.value = [...treeData.value];
+        resolve();
+      });
+    } else {
+      // TODO:接口需要查询用例
+      resolve();
+    }
+  });
+};
+
+const queryCategories = (parent_category) => {
+  listCategoryApiApi(parent_category).then((res) => {
+    treeData.value = res;
+  });
+};
+
+onMounted(() => {
+  queryCategories();
+});
 </script>
 
 <style lang="scss">

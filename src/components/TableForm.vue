@@ -7,8 +7,14 @@
       :pagination="false"
     >
       <template #bodyCell="{ column, record, index }">
-        <template v-if="column.key !== 'action'">
-          <a-input v-model:value="record[column.key]"></a-input>
+        <template v-if="column.key === 'param_key'">
+          <a-input v-model:value="record.param_key"></a-input>
+        </template>
+        <template v-if="column.key === 'value'">
+          <a-input v-model:value="record.value"></a-input>
+        </template>
+        <template v-if="column.key === 'desc'">
+          <a-input v-model:value="record.desc"></a-input>
         </template>
         <template v-if="column.key === 'action'">
           <span>
@@ -25,12 +31,24 @@
           </span>
         </template>
       </template>
+      <template #emptyText>
+        <div style="padding: 30px">
+          <IconEmpty />
+          <a-button
+            type="primary"
+            style="display: block; margin: auto"
+            @click="addParam"
+            >新增
+          </a-button>
+        </div>
+      </template>
     </a-table>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref, unref } from "vue";
+import IconEmpty from "./icons/IconEmpty.vue";
 
 const props = defineProps({
   // 表头
@@ -40,17 +58,14 @@ const props = defineProps({
       return [
         {
           title: "key",
-          dataIndex: "key",
-          key: "key",
+          key: "param_key",
         },
         {
           title: "value",
-          dataIndex: "value",
           key: "value",
         },
         {
           title: "描述",
-          dataIndex: "desc",
           key: "desc",
         },
         {
@@ -69,7 +84,7 @@ const props = defineProps({
     type: Object,
     default: () => {
       return {
-        key: "",
+        param_key: "",
         value: "",
         desc: "",
       };
@@ -91,7 +106,7 @@ const rowSelection = computed(() => {
 });
 const onSelectChange = () => {};
 const addParam = () => {
-  data.value.push(props.dataStruct);
+  data.value.push(JSON.parse(JSON.stringify(props.dataStruct)));
 };
 const deleteParam = (index) => {
   data.value.splice(index, 1);

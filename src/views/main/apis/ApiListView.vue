@@ -2,10 +2,14 @@
   <div class="api">
     <a-layout>
       <a-layout-sider>
-        <api-list-sider></api-list-sider>
+        <api-list-sider @showDefault="showApiContent"></api-list-sider>
       </a-layout-sider>
       <a-layout-content>
-        <api-list-content></api-list-content>
+        <div v-if="show">请新增或者编辑已经存在的接口</div>
+        <api-list-content
+          v-if="!show"
+          :category_id="category_id"
+        ></api-list-content>
       </a-layout-content>
     </a-layout>
   </div>
@@ -14,14 +18,25 @@
 <script setup>
 import ApiListSider from "@/components/apis/ApiListSider.vue";
 import ApiListContent from "@/components/apis/ApiListContent.vue";
+import { ref } from "vue";
+
+const show = ref(true);
+const category_id = ref("");
+
+const showApiContent = (id, defaultShow) => {
+  show.value = defaultShow;
+  category_id.value = id;
+};
 </script>
 
 <style lang="scss">
 .api {
   height: 100%;
-  .ant-layout{
+
+  .ant-layout {
     height: 100%;
   }
+
   .ant-layout-sider {
     color: #fff;
     background: #ffffff;
@@ -29,7 +44,8 @@ import ApiListContent from "@/components/apis/ApiListContent.vue";
     max-width: 280px !important;
     overflow-y: auto;
   }
-  .ant-layout-content{
+
+  .ant-layout-content {
     padding: 0px !important;
     width: 100%;
     height: 100%;
