@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from main.models import Projects
+from main.models import Project, Category, Api, Case
 
 
 class UserSerializer(ModelSerializer):
@@ -16,5 +16,30 @@ class ProjectsSerializer(ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
-        model = Projects
+        model = Project
         fields = ['id', 'name', 'desc', 'created_by', 'created_at']
+
+
+class CategorySerializer(ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
+    type = serializers.CharField(default="collection", read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'type', 'parent_category', 'created_at']
+
+
+class ApiSerializer(ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = Api
+        fields = ['id', 'name', 'desc', 'method', 'path', 'params', 'headers', 'body', 'created_at']
+
+
+class CaseSerializer(ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = Case
+        fields = ['id', 'name', 'desc', 'method', 'path', 'params', 'headers', 'body', 'created_at']

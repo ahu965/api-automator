@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from main.models import Projects
+from main.models import Project
 
 
 class BaseAdmin(admin.ModelAdmin):
@@ -12,4 +12,4 @@ class ProjectsAdmin(BaseAdmin):
     list_display = ('name', 'desc', 'created_by', 'created_at')
 
 
-admin.site.register(Projects, ProjectsAdmin)
+admin.site.register(Project, ProjectsAdmin)

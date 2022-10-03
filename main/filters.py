@@ -1,7 +1,7 @@
 from django_filters import CharFilter
 from django_filters.rest_framework import FilterSet
 
-from main.models import Projects
+from main.models import Project
 
 
 class ProjectsFilter(FilterSet):
@@ -10,5 +10,5 @@ class ProjectsFilter(FilterSet):
 
     class Meta:
         # 指定模型
-        models = Projects
+        models = Project
         fields = ['name']
