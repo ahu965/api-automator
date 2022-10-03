@@ -31,10 +31,11 @@ class CategorySerializer(ModelSerializer):
 
 class ApiSerializer(ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
+    type = serializers.CharField(default="api", read_only=True)
 
     class Meta:
         model = Api
-        fields = ['id', 'name', 'desc', 'method', 'path', 'params', 'headers', 'body', 'created_at']
+        fields = ['id', 'name', 'type', 'desc', 'method', 'path', 'params', 'headers', 'body', 'category', 'created_at']
 
 
 class CaseSerializer(ModelSerializer):
