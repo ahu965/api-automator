@@ -7,26 +7,27 @@
           <a-button type="link">新增接口</a-button>
         </template>
         <a-icon
-          class="iconfont icon-jia"
-          style="color: #6b6b6b; cursor: pointer"
+            class="iconfont icon-jia"
+            style="color: #6b6b6b; cursor: pointer"
         />
       </a-popover>
       <a-input
-        v-model:value="keywords"
-        placeholder="输入名称或者路径查询"
-        style="width: 250px; margin: 5px"
+          v-model:value="keywords"
+          placeholder="输入名称或者路径查询"
+          style="width: 250px; margin: 5px"
       />
     </div>
     <a-tree
-      v-model:expandedKeys="expandedKeys"
-      v-model:selectedKeys="selectedKeys"
-      show-line
-      show-icon
-      :tree-data="treeData"
-      :load-data="loadData"
+        v-model:expandedKeys="expandedKeys"
+        v-model:selectedKeys="selectedKeys"
+        show-line
+        show-icon
+        :tree-data="treeData"
+        :load-data="loadData"
+        @select="selectRow"
     >
       <template #switcherIcon="{ switcherCls }">
-        <down-outlined :class="switcherCls" />
+        <down-outlined :class="switcherCls"/>
       </template>
       <template #icon="{ method }">
         <template v-if="method === 'GET'">
@@ -47,26 +48,26 @@
       </template>
       <template #title="{ name, type, id }">
         <div
-          :style="[
-            type == 'collection' ? 'width: 100%' : 'width: calc(100% - 48px);', // 计算属性，即宽度为减去某个固定值后的100%宽度
+            :style="[
+            type === 'collection' ? 'width: 100%' : 'width: calc(100% - 48px);', // 计算属性，即宽度为减去某个固定值后的100%宽度
           ]"
-          style="display: inline-block"
+            style="display: inline-block"
         >
           <span>{{ name }}</span>
-          <a-popover trigger="hover" v-if="type == 'collection'">
+          <a-popover trigger="hover" v-if="type === 'collection'">
             <template #content>
               <a-button type="link">编辑</a-button>
               <a-button type="link" @click="showCategoryModal(id)"
-                >新增分类
+              >新增分类
               </a-button>
               <a-button type="link" @click="showApiContent(id)"
-                >新增接口
+              >新增接口
               </a-button>
               <a-button type="link" danger>删除</a-button>
             </template>
             <a-icon
-              class="iconfont icon-gengduo fr"
-              style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
+                class="iconfont icon-gengduo fr"
+                style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
             />
           </a-popover>
           <a-popover trigger="hover" v-if="type == 'api'">
@@ -75,8 +76,8 @@
               <a-button type="link" danger>删除</a-button>
             </template>
             <a-icon
-              class="iconfont icon-gengduo fr"
-              style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
+                class="iconfont icon-gengduo fr"
+                style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
             />
           </a-popover>
         </div>
@@ -84,32 +85,30 @@
     </a-tree>
   </div>
   <a-modal
-    v-model:visible="categoryVisible"
-    :title="categoryModalTitle"
-    :ok-text="'确定'"
-    :cancel-text="'取消'"
-    @ok="postCategory"
+      v-model:visible="categoryVisible"
+      :title="categoryModalTitle"
+      :ok-text="'确定'"
+      :cancel-text="'取消'"
+      @ok="postCategory"
   >
     <a-form :model="categoryForm" v-bind="layout" name="nest-messages">
       <a-form-item label="分类名称" :rules="[{ required: true }]">
-        <a-input v-model:value="categoryForm.name" />
+        <a-input v-model:value="categoryForm.name"/>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script setup>
-import { DownOutlined } from "@ant-design/icons-vue";
-import { onMounted, ref } from "vue";
+import {DownOutlined} from "@ant-design/icons-vue";
+import {onMounted, ref} from "vue";
 import {
   addCategoryApi,
-  listApiApi,
-  listCategoryApi,
+  detailApiApi,
   listCategoryApiApi,
 } from "../../apis/api";
-import axios from "axios";
 
-const emits = defineEmits(["showDefault"]);
+const emits = defineEmits(["showDefault", "detail"]);
 
 const showApiContent = (id) => {
   emits("showDefault", id, false);
@@ -177,6 +176,15 @@ const queryCategories = (parent_category) => {
 onMounted(() => {
   queryCategories();
 });
+
+const selectRow = (key, row) => {
+  if (row.node.type === "api") {
+    detailApiApi(row.node.id).then((res) => {
+      emits("showDefault", "", false);
+      emits("detail", res);
+    });
+  }
+};
 </script>
 
 <style lang="scss">

@@ -2,13 +2,17 @@
   <div class="api">
     <a-layout>
       <a-layout-sider>
-        <api-list-sider @showDefault="showApiContent"></api-list-sider>
+        <api-list-sider
+          @showDefault="showApiContent"
+          @detail="detail"
+        ></api-list-sider>
       </a-layout-sider>
       <a-layout-content>
         <div v-if="show">请新增或者编辑已经存在的接口</div>
         <api-list-content
           v-if="!show"
           :category_id="category_id"
+          :initData="apiDetail"
         ></api-list-content>
       </a-layout-content>
     </a-layout>
@@ -22,10 +26,14 @@ import { ref } from "vue";
 
 const show = ref(true);
 const category_id = ref("");
+const apiDetail = ref({});
 
 const showApiContent = (id, defaultShow) => {
   show.value = defaultShow;
   category_id.value = id;
+};
+const detail = (value) => {
+  apiDetail.value = value;
 };
 </script>
 

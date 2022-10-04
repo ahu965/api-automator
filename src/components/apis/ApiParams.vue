@@ -1,17 +1,21 @@
 <template>
   <div class="api-params">
-    <table-form :initData="initData"> </table-form>
+    <table-form :initData="initData"></table-form>
   </div>
 </template>
 
 <script setup>
-import { ref, defineExpose } from "vue";
+import { defineExpose } from "vue";
 import TableForm from "@/components/TableForm.vue";
 
-const initData = ref([]);
+const props = defineProps({
+  initData: {
+    type: Array,
+  },
+});
 
 const getData = () => {
-  return initData.value;
+  return props.initData;
 };
 defineExpose({
   getData,

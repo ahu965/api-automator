@@ -36,13 +36,13 @@
       </a-form>
       <a-tabs>
         <a-tab-pane key="1" tab="请求参数">
-          <api-params ref="apiParam"></api-params>
+          <api-params ref="apiParam" :initData="formState.params"></api-params>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求头">
-          <api-headers ref="apiHeader"></api-headers>
+          <api-headers ref="apiHeader" :initData="formState.headers"></api-headers>
         </a-tab-pane>
         <a-tab-pane key="3" tab="请求体">
-          <api-body></api-body>
+          <api-body ref="apiBody" :initData="formState.body" :type="formState.body_type"></api-body>
         </a-tab-pane>
         <a-tab-pane key="4" tab="前置脚本">TODO</a-tab-pane>
         <a-tab-pane key="5" tab="后置脚本">TODO</a-tab-pane>
@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import ApiParams from "@/components/apis/ApiParams.vue";
 import ApiHeaders from "@/components/apis/ApiHeaders.vue";
 import ApiBody from "@/components/apis/ApiBody.vue";
@@ -80,24 +80,50 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  initData: {
+    type: Object,
+  },
 });
 
 const apiHeader = ref();
 const apiParam = ref();
+const apiBodyRef = ref();
 
 const formState = ref({});
+
+watch(
+  () => props.initData,
+  () => {
+    formState.value = props.initData;
+    if (formState.value.params) {
+      formState.value.params = JSON.parse(formState.value.params);
+    }
+    if (formState.value.headers) {
+      formState.value.headers = JSON.parse(formState.value.headers);
+    }
+  },
+  { immediate: true } // immediate选项可以开启首次赋值监听
+);
 
 const saveApi = () => {
   if (props.category_id !== "") {
     formState.value.category = props.category_id;
   }
   // 获取请求参数
-  if(apiParam.value){
-    formState.value.params = JSON.stringify(apiParam.value.getData())
+  if (apiParam.value) {
+    formState.value.params = JSON.stringify(apiParam.value.getData());
   }
   // 获取请求头
   if (apiHeader.value) {
     formState.value.headers = JSON.stringify(apiHeader.value.getData());
+  }
+  // 获取请求体
+  if (apiBodyRef.value) {
+    formState.value.body_type = apiBodyRef.value.body_type;
+    formState.value.body = apiBodyRef.value.getData();
+    if (formState.value.body === "") {
+      formState.value.body_type = "NONE";
+    }
   }
   addApiApi(formState.value).then(() => {
     message.success("保存成功");

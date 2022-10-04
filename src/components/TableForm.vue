@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, unref } from "vue";
+import { computed, onMounted, ref, unref, watch } from "vue";
 import IconEmpty from "./icons/IconEmpty.vue";
 
 const props = defineProps({
@@ -92,9 +92,13 @@ const props = defineProps({
   },
 });
 const data = ref([]);
-onMounted(() => {
-  data.value = props.initData;
-});
+watch(
+  () => props.initData,
+  () => {
+    data.value = props.initData;
+  },
+  { immediate: true } // immediate选项可以开启首次赋值监听
+);
 
 const selectedRowKeys = ref([]);
 const rowSelection = computed(() => {

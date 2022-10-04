@@ -22,10 +22,10 @@ const router = createRouter({
           component: () => import("../views/main/apis/ApiListView.vue"),
         },
         {
-          path: "nav3",
-          name: "nav 3",
+          path: "main/envs",
+          name: "环境管理",
           icon: "icon-setting",
-          component: () => import("../views/AboutView.vue"),
+          component: () => import("../views/main/EnvListView.vue"),
         },
       ],
     },

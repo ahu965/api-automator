@@ -32,6 +32,13 @@ export function listApiApi(category) {
   });
 }
 
+export function detailApiApi(id) {
+  return request({
+    url: "main/apis/" + id + "/",
+    method: "get",
+  });
+}
+
 export function listCategoryApiApi(category) {
   return request({
     url: "main/categorie_apis/",
