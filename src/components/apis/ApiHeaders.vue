@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { defineExpose } from "vue";
+// import { defineExpose } from "vue";
 import TableForm from "@/components/TableForm.vue";
 
 const props = defineProps({

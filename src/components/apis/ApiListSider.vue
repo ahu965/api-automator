@@ -6,7 +6,7 @@
           <a-button type="link" @click="showCategoryModal">新增分类</a-button>
           <a-button type="link">新增接口</a-button>
         </template>
-        <a-icon
+        <span
             class="iconfont icon-jia"
             style="color: #6b6b6b; cursor: pointer"
         />
@@ -65,7 +65,7 @@
               </a-button>
               <a-button type="link" danger>删除</a-button>
             </template>
-            <a-icon
+            <span
                 class="iconfont icon-gengduo fr"
                 style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
             />
@@ -75,7 +75,7 @@
               <a-button type="link">新增用例</a-button>
               <a-button type="link" danger>删除</a-button>
             </template>
-            <a-icon
+            <span
                 class="iconfont icon-gengduo fr"
                 style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
             />
@@ -124,6 +124,7 @@ const categoryForm = ref({
   name: "",
   parent_category: null,
 });
+const keywords = ref("");
 
 const showCategoryModal = (id) => {
   if (id != null) {

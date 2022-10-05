@@ -6,11 +6,11 @@
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item v-for="(item, index) in menus" :key="index">
           <template #icon>
-<!--            <a-icon-->
-<!--              class="iconfont"-->
-<!--              :class="item.icon"-->
-<!--              style="margin-right: 10px"-->
-<!--            ></a-icon>-->
+            <span
+              class="iconfont"
+              :class="item.icon"
+              style="margin-right: 10px"
+            ></span>
           </template>
           <span>
             <router-link :to="'/' + item.path" class="link">{{
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
+import Icon ,{ MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
 import { onMounted, ref } from "vue";
 import router from "../router";
 

@@ -21,7 +21,7 @@
 <script setup>
 import TableForm from "@/components/TableForm.vue";
 // import ApiCoder from "@/components/ApiCoder.vue";
-import { ref, defineExpose, watch } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   type: {

@@ -18,12 +18,12 @@
         </template>
         <template v-if="column.key === 'action'">
           <span>
-            <a-icon
+            <span
               class="iconfont icon-jia"
               style="color: #6b6b6b; cursor: pointer; margin-right: 10px"
               @click="addParam"
             />
-            <a-icon
+            <span
               class="iconfont icon-jianhao"
               style="color: #e71f12; cursor: pointer"
               @click="deleteParam(index)"

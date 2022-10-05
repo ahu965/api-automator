@@ -22,18 +22,20 @@
       </a-button>
     </div>
     <a-table :columns="columns" :data-source="data" :pagination="pagination">
-      <template #name="{ text }">
-        <a>{{ text }}</a>
-      </template>
-      <template #creator="{ text }">
-        <span>{{ text == null ? "" : text.username }}</span>
-      </template>
-      <template #action="{ text }">
-        <span>
-          <a @click="updateProjectPre(text)">编辑</a>
-          <a-divider type="vertical" />
-          <a @click="deleteProjectPre(text)">删除</a>
-        </span>
+      <template #bodyCell="{column,record}">
+        <template v-if="column.key==='name'">
+          <a>{{ record.name }}</a>
+        </template>
+        <template v-if="column.key==='creator'">
+          <span>{{ record == null ? "" : record.username }}</span>
+        </template>
+        <template v-if="column.key==='action'">
+          <span>
+            <a @click="updateProjectPre(record)">编辑</a>
+            <a-divider type="vertical" />
+            <a @click="deleteProjectPre(record)">删除</a>
+          </span>
+        </template>
       </template>
     </a-table>
   </div>
@@ -106,7 +108,6 @@ const columns = [
     dataIndex: "name",
     key: "name",
     title: "名称",
-    slots: { customRender: "name" },
   },
   {
     title: "描述",
@@ -117,7 +118,6 @@ const columns = [
     title: "创建人",
     key: "created_by",
     dataIndex: "created_by",
-    slots: { customRender: "creator" },
   },
   {
     title: "创建时间",
@@ -127,7 +127,6 @@ const columns = [
   {
     title: "操作",
     key: "action",
-    slots: { customRender: "action" },
   },
 ];
 
