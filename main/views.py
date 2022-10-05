@@ -8,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from main.filters import ProjectsFilter
 from main.models import Project, Category, Api, Case, Env
 from main.serializer import ProjectsSerializer, CategorySerializer, ApiSerializer, CaseSerializer, EnvSerializer
-from request_util import request_by_domain, request_by_api, response_handler
+from utils import request_util
 
 
 class ProjectsViewSet(ModelViewSet):
@@ -76,5 +76,5 @@ class ApiSendView(APIView):
         if 'env' in request.data:
             env = request.data['env']
         env = Env.objects.get(id=env)
-        resp = request_by_api(env, api)
-        return Response(response_handler(resp))
+        resp = request_util.request_by_api(env, api)
+        return Response(request_util.response_handler(resp))

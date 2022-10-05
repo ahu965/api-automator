@@ -1,11 +1,9 @@
 import json
 from typing import Dict
 
-from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponse
 from requests import request, Response
 
-from main.models import Api, Env
+from main.models import Env
 
 
 def request_by_api(env: Env, api: Dict) -> Response:
@@ -36,11 +34,13 @@ def request_by_domain(
         url += f":{port}"
     url += path
     req_params = {}
-    if len(params) > 0:
+    if params:
+        params = json.loads(params)
         for param in params:
             req_params[param['param_key']] = param['value']
     req_headers = {}
-    if len(headers) > 0:
+    if headers:
+        headers = json.loads(headers)
         for header in headers:
             req_headers[header['param_key']] = header['value']
     if method == "GET":
@@ -56,16 +56,12 @@ def request_by_url():
     pass
 
 
-def response_handler(resp:Response):
+def response_handler(resp: Response):
     # 进行请求封装
     result = {
         "body": resp.content,
         "headers": resp.headers,
-        "content": f"""
-        {resp.request.method} {resp.request.url} {resp.status_code}\n
-        {resp.request.headers} \n
-        {resp.request.body} \n
-        {resp.raw}
-        """
+        "content": f"{resp.request.method} {resp.request.url} {resp.status_code}\n" +
+                   f"请求头：{resp.request.headers}\n请求体：{resp.request.body}"
     }
     return result
