@@ -6,8 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from main.filters import ProjectsFilter
-from main.models import Project, Category, Api, Case
-from main.serializer import ProjectsSerializer, CategorySerializer, ApiSerializer, CaseSerializer
+from main.models import Project, Category, Api, Case, Env
+from main.serializer import ProjectsSerializer, CategorySerializer, ApiSerializer, CaseSerializer, EnvSerializer
+from request_util import request_by_domain, request_by_api, response_handler
 
 
 class ProjectsViewSet(ModelViewSet):
@@ -44,6 +45,12 @@ class CaseViewSet(ModelViewSet):
     serializer_class = CaseSerializer
 
 
+class EnvViewSet(ModelViewSet):
+    queryset = Env.objects.filter()
+    serializer_class = EnvSerializer
+    pagination_class = PageNumberPagination
+
+
 class CategoryApiView(APIView):
     def get(self, request):
         category = None
@@ -60,3 +67,14 @@ class CategoryApiView(APIView):
             query_set = Api.objects.filter(category__isnull=True)
             api_data = ApiSerializer(query_set, many=True).data
         return Response(category_data + api_data)
+
+
+class ApiSendView(APIView):
+    def post(self, request):
+        api = ApiSerializer(request.data).instance
+        env = ''
+        if 'env' in request.data:
+            env = request.data['env']
+        env = Env.objects.get(id=env)
+        resp = request_by_api(env, api)
+        return Response(response_handler(resp))

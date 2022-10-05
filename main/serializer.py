@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from main.models import Project, Category, Api, Case
+from main.models import Project, Category, Api, Case, Env
 
 
 class UserSerializer(ModelSerializer):
@@ -35,7 +35,8 @@ class ApiSerializer(ModelSerializer):
 
     class Meta:
         model = Api
-        fields = ['id', 'name', 'type', 'desc', 'method', 'path', 'params', 'headers', 'body', 'category', 'created_at']
+        fields = ['id', 'name', 'type', 'desc', 'method', 'path', 'params', 'headers', 'body', 'body_type', 'category',
+                  'created_at']
 
 
 class CaseSerializer(ModelSerializer):
@@ -44,3 +45,11 @@ class CaseSerializer(ModelSerializer):
     class Meta:
         model = Case
         fields = ['id', 'name', 'desc', 'method', 'path', 'params', 'headers', 'body', 'created_at']
+
+
+class EnvSerializer(ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True, format="%Y-%m-%d %H:%M:%S")
+
+    class Meta:
+        model = Env
+        fields = ['id', 'name', 'desc', 'protocol', 'domain', 'port', 'created_by', 'created_at']
