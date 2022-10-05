@@ -46,3 +46,11 @@ export function listCategoryApiApi(category) {
     params: { category },
   });
 }
+
+export function apiSendApi(data) {
+  return request({
+    url: "main/api_send/",
+    method: "post",
+    data,
+  });
+}

@@ -6,17 +6,10 @@
 
 <script setup>
 import { ref } from "vue";
+import {useApiResponseStore} from "../../stores/api";
 
-const dataSource = ref([
-  {
-    key: "1",
-    value: "Mike",
-  },
-  {
-    key: "2",
-    value: "John",
-  },
-]);
+const apiResponse = useApiResponseStore();
+const dataSource = apiResponse.resHeaders.value;
 
 const columns = ref([
   {

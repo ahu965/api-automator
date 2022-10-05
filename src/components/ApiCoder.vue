@@ -1,15 +1,22 @@
 <template>
-  <codemirror
-    v-model="script"
-    :style="{ height: initHeight, 'font-size': '14px' }"
-    :autofocus="true"
-    :indent-with-tab="true"
-    :tab-size="2"
-    :extensions="extensions"
-    :disabled="readOnly"
-    :lang="lang"
-    @blur="updateScript"
-  />
+  <div style="position: relative">
+    <div
+      style="position: absolute; right: 10px; top: -55px"
+    >
+      <a-button @click="fomatter">格式化</a-button>
+    </div>
+    <codemirror
+      v-model="script"
+      :style="{ height: initHeight, 'font-size': '14px' }"
+      :autofocus="true"
+      :indent-with-tab="true"
+      :tab-size="2"
+      :extensions="extensions"
+      :disabled="readOnly"
+      :lang="lang"
+      @blur="updateScript"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -31,10 +38,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  initHeight:{
+  initHeight: {
     type: String,
     default: "600px",
-  }
+  },
 });
 
 const extensions = [python(), json()];
@@ -49,6 +56,9 @@ watch(
   { immediate: true } // immediate选项可以开启首次赋值监听
 );
 
+const fomatter = () => {
+  script.value = JSON.stringify(JSON.parse(script.value), null, "\t");
+};
 const emit = defineEmits(["updateScript"]);
 
 const updateScript = () => {

@@ -34,6 +34,13 @@ const showApiContent = (id, defaultShow) => {
 };
 const detail = (value) => {
   apiDetail.value = value;
+  if (apiDetail.value.params == null) {
+    apiDetail.value.params = "[]";
+  }
+  if (apiDetail.value.headers == null) {
+    apiDetail.value.headers = "[]";
+  }
+  console.log(apiDetail.value);
 };
 </script>
 

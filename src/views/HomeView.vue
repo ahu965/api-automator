@@ -6,11 +6,11 @@
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item v-for="(item, index) in menus" :key="index">
           <template #icon>
-            <a-icon
-              class="iconfont"
-              :class="item.icon"
-              style="margin-right: 10px"
-            ></a-icon>
+<!--            <a-icon-->
+<!--              class="iconfont"-->
+<!--              :class="item.icon"-->
+<!--              style="margin-right: 10px"-->
+<!--            ></a-icon>-->
           </template>
           <span>
             <router-link :to="'/' + item.path" class="link">{{

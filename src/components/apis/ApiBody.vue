@@ -3,12 +3,12 @@
     <a-tabs v-model:activeKey="body_type" type="card">
       <a-tab-pane key="NONE" tab="none">不需要请求体</a-tab-pane>
       <a-tab-pane key="JSON" tab="json">
-        <api-coder
-          :lang="json"
-          :initHeight="'250px'"
-          :content="jsonBody"
-          @updateScript="updateContent"
-        ></api-coder>
+<!--        <api-coder-->
+<!--          :lang="json"-->
+<!--          :initHeight="'250px'"-->
+<!--          :content="jsonBody"-->
+<!--          @updateScript="updateContent"-->
+<!--        ></api-coder>-->
       </a-tab-pane>
       <a-tab-pane key="FORM" tab="form-data">
         <table-form :initData="formBody"></table-form>
@@ -20,7 +20,7 @@
 
 <script setup>
 import TableForm from "@/components/TableForm.vue";
-import ApiCoder from "@/components/ApiCoder.vue";
+// import ApiCoder from "@/components/ApiCoder.vue";
 import { ref, defineExpose, watch } from "vue";
 
 const props = defineProps({
