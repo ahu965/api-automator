@@ -1,6 +1,6 @@
 <template>
   <div class="api-content">
-    <a-card title="接口名称" style="width: 100%; height: 100%">
+    <a-card :title="title" style="width: 100%; height: 100%">
       <template #extra>
         <a-select
             :placeholder="'请选择环境'"
@@ -40,28 +40,21 @@
             <a-select-option value="GET">GET</a-select-option>
             <a-select-option value="POST">POST</a-select-option>
             <a-select-option value="PATCH">PATCH</a-select-option>
+            <a-select-option value="PUT">PUT</a-select-option>
             <a-select-option value="DELETE">DELETE</a-select-option>
-            <a-select-option value="PATCH">PATCH</a-select-option>
           </a-select>
           <a-input v-model:value="formState.path" placeholder="请输入路径"/>
         </a-form-item>
       </a-form>
       <a-tabs>
         <a-tab-pane key="1" tab="请求参数">
-          <api-params ref="apiParam" :initData="formState.params"></api-params>
+          <api-params></api-params>
         </a-tab-pane>
         <a-tab-pane key="2" tab="请求头">
-          <api-headers
-              ref="apiHeader"
-              :initData="formState.headers"
-          ></api-headers>
+          <api-headers></api-headers>
         </a-tab-pane>
         <a-tab-pane key="3" tab="请求体">
-          <api-body
-              ref="apiBody"
-              :initData="formState.body"
-              :type="formState.body_type"
-          ></api-body>
+          <api-body></api-body>
         </a-tab-pane>
         <a-tab-pane key="4" tab="前置脚本">TODO</a-tab-pane>
         <a-tab-pane key="5" tab="后置脚本">TODO</a-tab-pane>
@@ -84,7 +77,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import ApiParams from "@/components/apis/ApiParams.vue";
 import ApiHeaders from "@/components/apis/ApiHeaders.vue";
 import ApiBody from "@/components/apis/ApiBody.vue";
@@ -94,57 +87,59 @@ import ReqContent from "@/components/apis/reqContent.vue";
 import {addApiApi, apiSendApi} from "@/apis/api";
 import {message} from "ant-design-vue";
 import {listApi} from "@/apis/env";
-import {useApiResponseStore} from "@/stores/api";
+import {useApiRequestStore, useApiResponseStore} from "@/stores/api";
 
-const props = defineProps({
-  category_id: {
-    type: String,
-    default: "",
-  },
-  initData: {
-    type: Object,
-  },
-});
-
-const apiHeader = ref();
-const apiParam = ref();
-const apiBodyRef = ref();
-
+const apiRequest = useApiRequestStore();
 const formState = ref({});
-
 watch(
-    () => props.initData,
+    () => apiRequest.reqApi,
     () => {
-      formState.value = props.initData;
-      if (formState.value.params) {
-        formState.value.params = JSON.parse(formState.value.params);
+      if(typeof(apiRequest.reqApi)==='object'){
+        formState.value = apiRequest.reqApi;
+      }else{
+        formState.value = {}
       }
-      if (formState.value.headers) {
-        formState.value.headers = JSON.parse(formState.value.headers);
-      }
+
     },
     {immediate: true} // immediate选项可以开启首次赋值监听
 );
+const title = computed(() => {
+  let t = ""
+  if (typeof(apiRequest.reqApi)!=='object') {
+    t = "新增接口"
+    if (apiRequest.reqApiCategory !== "") {
+      t += "(分类ID：" + apiRequest.reqApiCategory + ")"
+    }
+  } else {
+    t = apiRequest.reqApi.name;
+  }
+  return t;
+})
+
 
 const saveApi = () => {
-  if (props.category_id !== "") {
-    formState.value.category = props.category_id;
+  if (apiRequest.reqApiCategory !== "") {
+    formState.value.category = apiRequest.reqApiCategory;
   }
   // 获取请求参数
-  if (apiParam.value) {
-    formState.value.params = JSON.stringify(apiParam.value.getData());
+  if (apiRequest.reqParams.length !== 0) {
+    formState.value.params = JSON.stringify(apiRequest.reqParams);
   }
   // 获取请求头
-  if (apiHeader.value) {
-    formState.value.headers = JSON.stringify(apiHeader.value.getData());
+  if (apiRequest.reqHeaders.length !== 0) {
+    formState.value.headers = JSON.stringify(apiRequest.reqHeaders);
   }
+  formState.value.body_type = apiRequest.reqBodyType;
   // 获取请求体
-  if (apiBodyRef.value) {
-    formState.value.body_type = apiBodyRef.value.body_type;
-    formState.value.body = apiBodyRef.value.getData();
-    if (formState.value.body === "") {
-      formState.value.body_type = "NONE";
-    }
+  switch (apiRequest.reqBodyType) {
+    case "JSON":
+      formState.value.body = apiRequest.reqJsonBody;
+      break;
+    case "FORM":
+      formState.value.body = JSON.stringify(apiRequest.reqFormBody);
+      break;
+    default:
+      break;
   }
   addApiApi(formState.value).then(() => {
     message.success("保存成功");
@@ -159,13 +154,21 @@ onMounted(() => {
 const enviroment = ref("");
 const apiResponse = useApiResponseStore();
 const sendApi = () => {
+  // 获取请求参数
+  formState.value.params = JSON.stringify(apiRequest.reqParams);
+  // 获取请求头
+  formState.value.headers = JSON.stringify(apiRequest.reqHeaders);
+  formState.value.body_type = apiRequest.reqBodyType;
   // 获取请求体
-  if (apiBodyRef.value) {
-    formState.value.body_type = apiBodyRef.value.body_type;
-    formState.value.body = apiBodyRef.value.getData();
-    if (formState.value.body === "") {
-      formState.value.body_type = "NONE";
-    }
+  switch (apiRequest.reqBodyType) {
+    case "JSON":
+      formState.value.body = apiRequest.reqJsonBody;
+      break;
+    case "FORM":
+      formState.value.body = JSON.stringify(apiRequest.reqFormBody);
+      break;
+    default:
+      break;
   }
   // 测试环境
   if (enviroment.value) {

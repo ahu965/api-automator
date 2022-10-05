@@ -1,25 +1,14 @@
 <template>
   <div class="api-header">
-    <table-form :initData="initData"></table-form>
+    <table-form :initData="apiRequest.reqHeaders"></table-form>
   </div>
 </template>
 
 <script setup>
-// import { defineExpose } from "vue";
 import TableForm from "@/components/TableForm.vue";
+import {useApiRequestStore} from "@/stores/api";
 
-const props = defineProps({
-  initData: {
-    type: Array,
-  },
-});
-
-const getData = () => {
-  return props.initData;
-};
-defineExpose({
-  getData,
-});
+const apiRequest = useApiRequestStore();
 </script>
 
 <style scoped></style>

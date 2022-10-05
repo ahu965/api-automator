@@ -4,7 +4,7 @@
       <a-popover trigger="hover">
         <template #content>
           <a-button type="link" @click="showCategoryModal">新增分类</a-button>
-          <a-button type="link">新增接口</a-button>
+          <a-button type="link" @click="addApi(null)">新增接口</a-button>
         </template>
         <span
             class="iconfont icon-jia"
@@ -60,7 +60,7 @@
               <a-button type="link" @click="showCategoryModal(id)"
               >新增分类
               </a-button>
-              <a-button type="link" @click="showApiContent(id)"
+              <a-button type="link" @click="addApi(id)"
               >新增接口
               </a-button>
               <a-button type="link" danger>删除</a-button>
@@ -70,7 +70,7 @@
                 style="color: #6b6b6b; cursor: pointer; padding-right: 10px"
             />
           </a-popover>
-          <a-popover trigger="hover" v-if="type == 'api'">
+          <a-popover trigger="hover" v-if="type === 'api'">
             <template #content>
               <a-button type="link">新增用例</a-button>
               <a-button type="link" danger>删除</a-button>
@@ -91,7 +91,7 @@
       :cancel-text="'取消'"
       @ok="postCategory"
   >
-    <a-form :model="categoryForm" v-bind="layout" name="nest-messages">
+    <a-form :model="categoryForm" name="nest-messages">
       <a-form-item label="分类名称" :rules="[{ required: true }]">
         <a-input v-model:value="categoryForm.name"/>
       </a-form-item>
@@ -107,12 +107,9 @@ import {
   detailApiApi,
   listCategoryApiApi,
 } from "../../apis/api";
+import {useApiRequestStore} from "@/stores/api";
 
-const emits = defineEmits(["showDefault", "detail"]);
-
-const showApiContent = (id) => {
-  emits("showDefault", id, false);
-};
+const emits = defineEmits(["showDefault"]);
 
 const expandedKeys = ref(["0-0-0"]);
 const selectedKeys = ref([]);
@@ -178,14 +175,28 @@ onMounted(() => {
   queryCategories();
 });
 
+const apiRequest = useApiRequestStore();
+
+// 点击树节点
 const selectRow = (key, row) => {
   if (row.node.type === "api") {
     detailApiApi(row.node.id).then((res) => {
-      emits("showDefault", "", false);
-      emits("detail", res);
+      emits("showDefault", false);
+      apiRequest.updateRequest(res);
     });
+  }else{
+    emits("showDefault", true);
   }
 };
+
+// 新增接口
+const addApi = (id)=>{
+  emits("showDefault", false);
+  apiRequest.resetData();
+  if(id!==null){
+    apiRequest.reqApiCategory = id;
+  }
+}
 </script>
 
 <style lang="scss">
