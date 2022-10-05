@@ -1,15 +1,27 @@
 <template>
   <div class="res-header">
-    <a-table :dataSource="dataSource" :columns="columns" :pagination="false" />
+    <a-table :dataSource="dataSource" :columns="columns" :pagination="false"/>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {computed, ref} from "vue";
 import {useApiResponseStore} from "../../stores/api";
 
 const apiResponse = useApiResponseStore();
-const dataSource = apiResponse.resHeaders.value;
+const dataSource = computed(()=>{
+  let resHeaders = apiResponse.resHeaders;
+  const res = [];
+  if(typeof(resHeaders)==='object'){
+    for (const key in resHeaders) {
+      let body={}
+      body["key"]=key;
+      body["value"]=resHeaders[key];
+      res.push(body)
+    }
+  }
+  return res;
+})
 
 const columns = ref([
   {

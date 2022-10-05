@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useApiResponseStore = defineStore("apiResponse", () => {
-  const resBody = ref({});
+  const resBody = ref("");
   const resHeaders = ref([]);
   const reqContent = ref("");
   const updateResponse = (data) => {

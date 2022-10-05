@@ -91,11 +91,10 @@ import ApiBody from "@/components/apis/ApiBody.vue";
 import ResBody from "@/components/apis/ResBody.vue";
 import ResHeader from "@/components/apis/ResHeader.vue";
 import ReqContent from "@/components/apis/reqContent.vue";
-import {addApiApi, apiSendApi} from "../../apis/api";
+import {addApiApi, apiSendApi} from "@/apis/api";
 import {message} from "ant-design-vue";
-import {listApi} from "../../apis/env";
-import {useApiResponseStore} from "../../stores/api";
-// import {useApiResponseStore} from "../../stores/api";
+import {listApi} from "@/apis/env";
+import {useApiResponseStore} from "@/stores/api";
 
 const props = defineProps({
   category_id: {

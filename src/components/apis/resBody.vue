@@ -1,7 +1,7 @@
 <template>
   <div class="res-body">
     <api-coder
-      :lang="json"
+      :lang="'json'"
       :initHeight="'250px'"
       :content="apiResponse.resBody"
       @updateScript="updateContent"
